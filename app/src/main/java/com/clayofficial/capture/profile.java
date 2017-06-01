@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -17,12 +18,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class profile extends AppCompatActivity implements View.OnClickListener {
     private TextView name, email, id, loc;
     private ImageView camera, logout;
     private Button getLocation, checkmem;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private static final int CAM_REQUEST=1313;
+    private static final int GALLERY_REQUEST=2313;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +88,29 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivity(gallery);
         }
+    }
+
+    public boolean hasCamera()
+    {
+        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
+    public void launchcamera()
+    {
+        Intent i =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File wallpaperDirectory = new File("/sdcard/Capture/");
+        wallpaperDirectory.mkdirs();
+        //File pictureDirectory=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        String pictureName = getPictureName();
+        File imagefile=new File(wallpaperDirectory,pictureName);
+        Uri picUri=Uri.fromFile(imagefile);
+        i.putExtra(MediaStore.EXTRA_OUTPUT,picUri);
+        startActivityForResult(i,CAM_REQUEST);
+    }
+
+    private String getPictureName() {
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String timestamp=sdf.format(new Date());
+        return "Capture_"+timestamp+".jpg";
     }
 
     void configure_button() {
