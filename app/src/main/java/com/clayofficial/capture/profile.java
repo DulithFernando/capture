@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -73,21 +74,45 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             }
         };
         configure_button();
+
+        //Check Authentication
+        if(!Shared.getInstance(this).isLoggedIn())
+        {
+            this.finish();
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+        }
+
+        //Set Values
+        id.setText("USERID : CPT0"+ Shared.getInstance(this).getUserid());
+        name.setText(Shared.getInstance(this).getFullname());
+        email.setText(Shared.getInstance(this).getUserEmail());
     }
 
     @Override
-    public void onClick(View v) {
-
-        if (v == logout) {
-            Shared.getInstance(this).logOut();
-            finish();
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==CAM_REQUEST && resultCode==RESULT_OK)
+        {
+//            Bitmap thumbnail =(Bitmap)data.getExtras().get("data");
+//            photo.setImageBitmap(thumbnail);
         }
+    }
 
-        if (v == checkmem) {
-            Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivity(gallery);
+    void configure_button() {
+        // first check for permissions
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET},10);
+            }
+            return;
         }
+        getLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                locationManager.requestLocationUpdates("gps", 5000, 1, locationListener);
+            }
+        });
+
     }
 
     public boolean hasCamera()
@@ -113,20 +138,24 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         return "Capture_"+timestamp+".jpg";
     }
 
-    void configure_button() {
-        // first check for permissions
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET},10);
-            }
-            return;
-        }
-        getLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                locationManager.requestLocationUpdates("gps", 5000, 1, locationListener);
-            }
-        });
+    @Override
+    public void onClick(View v) {
 
+        if (v == logout) {
+            Shared.getInstance(this).logOut();
+            finish();
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
+        if(v==camera)
+        {
+            if(hasCamera())
+            {  launchcamera();  }
+            else { Toast.makeText(getApplicationContext(),"Camera Not Available",Toast.LENGTH_LONG).show(); }
+        }
+
+        if (v == checkmem) {
+            Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivity(gallery);
+        }
     }
 }
