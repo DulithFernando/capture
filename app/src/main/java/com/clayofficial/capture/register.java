@@ -96,7 +96,7 @@ public class register extends AppCompatActivity implements View.OnClickListener 
         }
         if(v==reg_btn)
         {
-          //  register();
+            register();
         }
     }
 }

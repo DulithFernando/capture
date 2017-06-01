@@ -48,6 +48,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loginbtn.setOnClickListener(this);
         register.setOnClickListener(this);
 
+        //Check Authentication
+        if(Shared.getInstance(this).isLoggedIn())
+        {
+            this.finish();
+            startActivity(new Intent(getApplicationContext(),profile.class));
+        }
 
     }
 
@@ -114,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if( v == loginbtn)
         {
-           // Login();
+           Login();
         }
     }
 }
