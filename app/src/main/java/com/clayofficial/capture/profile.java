@@ -3,6 +3,7 @@ package com.clayofficial.capture;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,9 +24,11 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.clayofficial.capture.R.id.photo;
+
 public class profile extends AppCompatActivity implements View.OnClickListener {
     private TextView name, email, id, loc;
-    private ImageView camera, logout;
+    private ImageView camera, logout,userimage;
     private Button getLocation, checkmem;
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -44,8 +47,10 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         camera = (ImageView) findViewById(R.id.camera);
         logout = (ImageView) findViewById(R.id.logout);
         checkmem = (Button) findViewById(R.id.check);
+        userimage = (ImageView)findViewById(R.id.photo);
         getLocation = (Button) findViewById(R.id.get_loc);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
 
         //Listener
         camera.setOnClickListener(this);
@@ -93,8 +98,8 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==CAM_REQUEST && resultCode==RESULT_OK)
         {
-//            Bitmap thumbnail =(Bitmap)data.getExtras().get("data");
-//            photo.setImageBitmap(thumbnail);
+    //        Bitmap thumbnail =(Bitmap)data.getExtras().get("data");
+    //        userimage.setImageBitmap(thumbnail);
         }
     }
 
@@ -130,6 +135,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         Uri picUri=Uri.fromFile(imagefile);
         i.putExtra(MediaStore.EXTRA_OUTPUT,picUri);
         startActivityForResult(i,CAM_REQUEST);
+        Toast.makeText(getApplicationContext(),"Saved to /sdcard/Capture/"+pictureName,Toast.LENGTH_LONG).show();
     }
 
     private String getPictureName() {

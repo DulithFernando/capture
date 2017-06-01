@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Check Authentication
         if(Shared.getInstance(this).isLoggedIn())
         {
-            this.finish();
             startActivity(new Intent(getApplicationContext(),profile.class));
+            this.finish();
         }
 
     }
@@ -81,8 +81,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         nm.notify(0,noti);
 
                         //Redirect To Profile
+                        startActivity(new Intent(getApplicationContext(),profile.class));
                         finish();
-                        //startActivity(new Intent(getApplicationContext(),profile.class));
                     }
                     else
                     {
